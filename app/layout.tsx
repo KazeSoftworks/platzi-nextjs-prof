@@ -1,15 +1,6 @@
-import { ReactNode } from 'react';
-import './globals.css';
-
-export default function RootLayout({ children }: { children: ReactNode }): JSX.Element {
-  return (
-    <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <head />
-      <body>{children}</body>
-    </html>
-  );
-}
+import React from 'react';
+import '@styles/tailwind.css';
+const MainLayout = ({ children }: { children: React.ReactNode }): JSX.Element => {
+  return <div>{children}</div>;
+};
+export default MainLayout;
