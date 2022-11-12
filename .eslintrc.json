@@ -1,3 +1,29 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "next/core-web-vitals",
+    "prettier"
+  ],
+  "env":{
+    "browser": true,
+    "amd": true,
+    "node": true,
+    "es6": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./tsconfig.json"] // Specify it only for TypeScript files
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "eqeqeq": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/explicit-function-return-type": ["error", { "allowExpressions": true }],
+    "func-names": "error",
+    "prettier/prettier": ["error", { "endOfLine": "auto" }]
+  }
 }
