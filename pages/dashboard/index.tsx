@@ -3,26 +3,46 @@ import endPoints from '@services/api';
 import useFetch from '@hooks/useFetch';
 import { useState } from 'react';
 import { IsValidHttpUrl } from '@utils/index';
+import { Chart } from '@common/Chart';
 
-const PRODUCT_LIMIT = 5;
+const PRODUCT_LIMIT = 10;
 const PRODUCT_OFFSET = 0;
 
 export default function Dashboard(): JSX.Element {
   const [offset, setOffset] = useState(PRODUCT_OFFSET);
   const products = useFetch<ProductInterface[]>(endPoints.products.getListProducts(PRODUCT_LIMIT, PRODUCT_OFFSET + offset));
 
+  const categoryNames = products?.map((product) => product.category);
+  const categoryCount = categoryNames?.map((category) => category.name);
+
+  const countOccurences = (array: string[]): { [key: string]: number } => {
+    return array.reduce((prev: { [key: string]: number }, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {});
+  };
+
   const hasPositiveOffset = !!(products && products.length > 0);
   const hasNegativeOffset = !!(products && offset > 0);
 
   const AddOffset = (): void => {
-    if (hasPositiveOffset) setOffset(offset + PRODUCT_LIMIT);
+    setOffset(offset + PRODUCT_LIMIT);
   };
   const RemoveOffset = (): void => {
-    if (hasNegativeOffset) setOffset(offset - PRODUCT_LIMIT);
+    setOffset(offset - PRODUCT_LIMIT);
+  };
+
+  const data = {
+    datasets: [
+      {
+        label: 'Categories',
+        data: countOccurences(categoryCount || []),
+        borderWidth: 2,
+        backgroundColor: ['#fffbb1', '#c0c0c0', '#50AF95', '#f3ba2f', '#2a71d0'],
+      },
+    ],
   };
 
   return (
     <>
+      <Chart className="mb-8 mt-2" chartData={data} />
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">

@@ -22,3 +22,7 @@ interface Category {
   name: string;
   image: string;
 }
+
+interface CategoryDataset {
+  [key: string]: number;
+}
