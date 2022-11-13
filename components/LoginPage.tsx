@@ -1,15 +1,40 @@
 import { LockClosedIcon } from '@heroicons/react/24/solid';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { useAuth } from '@hooks/useAuth';
+import axios, { AxiosError } from 'axios';
+import Modal from '@common/Modal';
 
 export default function LoginPage(): JSX.Element {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  const auth = useAuth();
 
   const submitHandler = (e: React.FormEvent): void => {
     e.preventDefault();
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
-    console.log(email, password);
+    if (email && password && auth) {
+      auth
+        .signIn(email, password)
+        .then(() => {
+          console.log('success');
+        })
+        .catch((err: Error | AxiosError) => {
+          if (axios.isAxiosError(err)) {
+            console.log(err);
+            if (err.code === AxiosError.ERR_BAD_REQUEST) {
+              setError('User or password is incorrect, try again');
+            } else if (err.code === AxiosError.ERR_NETWORK || err.code === AxiosError.ETIMEDOUT) {
+              setError('Check your internet connection');
+            } else {
+              setError('Internal server error');
+            }
+          } else {
+            console.error('Unknown error', err);
+          }
+        });
+    }
   };
 
   return (
@@ -82,6 +107,11 @@ export default function LoginPage(): JSX.Element {
               </button>
             </div>
           </form>
+          {error && (
+            <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+              <span className="font-medium">Login Failed!</span> {error}
+            </div>
+          )}
         </div>
       </div>
     </>
