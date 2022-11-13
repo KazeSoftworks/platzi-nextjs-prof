@@ -1,14 +1,16 @@
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import { useRef, useState } from 'react';
 import { useAuth } from '@hooks/useAuth';
+import { useRouter } from 'next/router';
 import axios, { AxiosError } from 'axios';
-import Modal from '@common/Modal';
+import Image from 'next/image';
 
 export default function LoginPage(): JSX.Element {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const auth = useAuth();
+  const router = useRouter();
 
   const submitHandler = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -18,7 +20,7 @@ export default function LoginPage(): JSX.Element {
       auth
         .signIn(email, password)
         .then(() => {
-          console.log('success');
+          router.push('/dashboard');
         })
         .catch((err: Error | AxiosError) => {
           if (axios.isAxiosError(err)) {
@@ -42,7 +44,7 @@ export default function LoginPage(): JSX.Element {
       <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
-            <img className="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
+            <Image className="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" height={100} width={100} />
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
           </div>
           <form className="mt-8 space-y-6" action="#" method="POST" onSubmit={submitHandler}>

@@ -1,7 +1,9 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from 'react';
+import { useAuth } from '@hooks/useAuth';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, Bars3Icon as MenuIcon, XMarkIcon as XIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 const userData = {
   name: 'Tom Cook',
@@ -24,6 +26,14 @@ function classNames(...classes: string[]): string {
 }
 
 export default function Header(): JSX.Element {
+  const auth = useAuth();
+
+  const userData = {
+    name: auth?.user?.name,
+    email: auth?.user?.email,
+    imageUrl: auth?.user?.avatar ?? `https://ui-avatars.com/api?name=${auth?.user?.name}`,
+  };
+
   return (
     <>
       <Disclosure as="nav" className="bg-gray-800">
@@ -65,7 +75,7 @@ export default function Header(): JSX.Element {
                       <div>
                         <Menu.Button className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                           <span className="sr-only">Open user menu</span>
-                          <img className="h-8 w-8 rounded-full" src={userData.imageUrl} alt="" />
+                          <Image className="h-8 w-8 rounded-full" src={userData.imageUrl} alt="" height={128} width={96} />
                         </Menu.Button>
                       </div>
                       <Transition
