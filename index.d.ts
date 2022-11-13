@@ -17,6 +17,12 @@ interface ProductInterface {
   categoryId: number;
 }
 
+type AddProductInterface = Omit<ProductInterface, 'category' | 'id'>;
+
+interface InputProductInterface extends Omit<ProductInterface, 'category' | 'id'> {
+  images: FileList;
+}
+
 interface Category {
   id: number;
   name: string;
