@@ -1,7 +1,9 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { addProduct } from '@services/api/products';
+import { Dispatch, SetStateAction } from 'react';
+import axios, { AxiosError } from 'axios';
 
-export default function FormProduct(): JSX.Element {
+export default function FormProduct({ setOpen, setAlert }: { setOpen: Dispatch<SetStateAction<boolean>>; setAlert: Dispatch<SetStateAction<AlertOptions>> }): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -9,9 +11,22 @@ export default function FormProduct(): JSX.Element {
   } = useForm<InputProductInterface>();
 
   const onSubmit: SubmitHandler<InputProductInterface> = (data): void => {
-    addProduct(data).then((response) => {
-      console.log(response);
-    });
+    addProduct(data)
+      .then((response) => {
+        setAlert({
+          active: true,
+          message: 'Product added successfully',
+          type: 'success',
+          autoClose: false,
+        });
+        setOpen(false);
+        console.log(response);
+      })
+      .catch((error: Error | AxiosError) => {
+        if (axios.isAxiosError(error)) {
+          setAlert({ active: true, message: error.message, type: 'error', autoClose: false });
+        }
+      });
   };
 
   //const formRef = useRef<HTMLFormElement>(null);

@@ -32,3 +32,10 @@ interface Category {
 interface CategoryDataset {
   [key: string]: number;
 }
+
+interface AlertOptions {
+  active: boolean;
+  message: string;
+  type: 'none' | 'success' | 'warning' | 'error';
+  autoClose: boolean;
+}
