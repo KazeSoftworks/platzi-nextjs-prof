@@ -6,6 +6,7 @@ import endPoints from '@services/api';
 interface AuthContextInterface {
   user: ProfileInterface | null;
   signIn: (email: string, password: string) => Promise<void>;
+  logout: () => void;
 }
 
 interface AuthResponse {
@@ -45,8 +46,16 @@ function useProviderAuth(): AuthContextInterface {
     }
   };
 
+  const logout = (): void => {
+    Cookie.remove('token');
+    setUser(null);
+    delete axios.defaults.headers.Authorization;
+    window.location.href = '/login';
+  };
+
   return {
     user,
     signIn,
+    logout,
   };
 }
