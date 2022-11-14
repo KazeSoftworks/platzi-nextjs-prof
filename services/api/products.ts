@@ -24,4 +24,22 @@ const deleteProduct = async (id: number): Promise<unknown> => {
   return response.data;
 };
 
-export { addProduct, deleteProduct };
+const updateProduct = async (id: number, body: InputProductInterface): Promise<ProductInterface> => {
+  const config: AxiosRequestConfig = {
+    headers: {
+      accept: '*/*',
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const standardBody: AddProductInterface = {
+    ...body,
+    // images: [body.images[0].name], //realistic
+    images: ['https://api.lorem.space/image/watch?w=640&h=480&r=8957'], //with mock img
+  };
+
+  const response = await axios.put(endPoints.products.putProducts(id), standardBody, config);
+  return response.data;
+};
+
+export { addProduct, deleteProduct, updateProduct };

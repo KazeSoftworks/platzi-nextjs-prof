@@ -1,32 +1,55 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { addProduct } from '@services/api/products';
+import { addProduct, updateProduct } from '@services/api/products';
 import { Dispatch, SetStateAction } from 'react';
 import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 
-export default function FormProduct({ setOpen, setAlert }: { setOpen: Dispatch<SetStateAction<boolean>>; setAlert: Dispatch<SetStateAction<AlertOptions>> }): JSX.Element {
+interface FormProductProps {
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+  setAlert?: Dispatch<SetStateAction<AlertOptions>>;
+  product?: ProductInterface;
+}
+
+export default function FormProduct({ setOpen, setAlert, product }: FormProductProps): JSX.Element {
   const {
     register,
     handleSubmit,
     // formState: { errors },
   } = useForm<InputProductInterface>();
+  const router = useRouter();
+  console.log(product);
 
   const onSubmit: SubmitHandler<InputProductInterface> = (data): void => {
-    addProduct(data)
-      .then((response) => {
-        setAlert({
-          active: true,
-          message: 'Product added successfully',
-          type: 'success',
-          autoClose: false,
+    if (setOpen && setAlert) {
+      addProduct(data)
+        .then((response) => {
+          setAlert({
+            active: true,
+            message: 'Product added successfully',
+            type: 'success',
+            autoClose: false,
+          });
+          setOpen(false);
+          console.log(response);
+        })
+        .catch((error: Error | AxiosError) => {
+          if (axios.isAxiosError(error)) {
+            setAlert({ active: true, message: error.message, type: 'error', autoClose: false });
+          }
         });
-        setOpen(false);
-        console.log(response);
-      })
-      .catch((error: Error | AxiosError) => {
-        if (axios.isAxiosError(error)) {
-          setAlert({ active: true, message: error.message, type: 'error', autoClose: false });
-        }
-      });
+    }
+    if (product) {
+      updateProduct(product.id, data)
+        .then((response) => {
+          console.log(response);
+          router.push('/dashboard/products/');
+        })
+        .catch((error: Error | AxiosError) => {
+          if (axios.isAxiosError(error)) {
+            console.error(error);
+          }
+        });
+    }
   };
 
   //const formRef = useRef<HTMLFormElement>(null);
@@ -59,6 +82,7 @@ export default function FormProduct({ setOpen, setAlert }: { setOpen: Dispatch<S
                 type="text"
                 name="title"
                 id="title"
+                defaultValue={product?.title}
                 className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
@@ -71,6 +95,7 @@ export default function FormProduct({ setOpen, setAlert }: { setOpen: Dispatch<S
                 type="number"
                 name="price"
                 id="price"
+                defaultValue={product?.price}
                 className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
               />
             </div>
@@ -80,6 +105,7 @@ export default function FormProduct({ setOpen, setAlert }: { setOpen: Dispatch<S
               </label>
               <select
                 id="category"
+                defaultValue={product?.categoryId}
                 {...register('categoryId', { required: true })}
                 name="category"
                 autoComplete="category-name"
@@ -99,6 +125,7 @@ export default function FormProduct({ setOpen, setAlert }: { setOpen: Dispatch<S
               </label>
               <textarea
                 id="description"
+                defaultValue={product?.description}
                 {...register('description', { required: true })}
                 autoComplete="description"
                 rows={3}
