@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
+import { CheckIcon } from '@heroicons/react/20/solid';
 import { IsValidHttpUrl } from '@utils/index';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import endPoints from '@services/api';
 import Alert from '@common/Alert';
 import useAlert from '@hooks/useAlert';
+import { XCircleIcon } from '@heroicons/react/24/solid';
+import { deleteProduct } from '@services/api/products';
 
 const Products = (): JSX.Element => {
   const [products, setProducts] = useState<ProductInterface[]>([]);
@@ -25,6 +27,17 @@ const Products = (): JSX.Element => {
       console.error(error);
     }
   }, [alert]);
+
+  const handleDelete = (id: number): void => {
+    deleteProduct(id).then(() => {
+      setAlert({
+        active: true,
+        message: 'Product deleted successfully',
+        type: 'error',
+        autoClose: true,
+      });
+    });
+  };
 
   return (
     <>
@@ -96,9 +109,7 @@ const Products = (): JSX.Element => {
                         </a>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                          Delete
-                        </a>
+                        <XCircleIcon className="flex-shrink-0 h6 w-6 text-gray-400 cursor-pointer" onClick={() => handleDelete(product.id)} />
                       </td>
                     </tr>
                   ))}
